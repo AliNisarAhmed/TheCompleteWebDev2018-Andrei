@@ -8,6 +8,10 @@ const button2 = document.querySelector("#button2");
 
 // console.log(document.body.style.background)   // Why is this empty???
 // css.textContent = body.style.background + ";";
+setGradient();  //This displays the initial color on the h3 
+
+// yet the question regarding why document.body.style.background is an empty
+// string despite being set at the start.
 
 function setGradient() {
     body.style.background = 
