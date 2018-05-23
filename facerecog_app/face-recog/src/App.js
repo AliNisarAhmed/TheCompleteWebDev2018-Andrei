@@ -31,7 +31,27 @@ class App extends Component {
     this.state = {
       input: '',
       imageUrl: '',
+      box: {},
     }
+  }
+
+  calculateFaceLocation = (data) => {
+    const clarifaiFace = data.outputs[0].data.regions[0].region_info.bounding_box;
+    const image = document.querySelector("#inputimage");
+    const width = Number(image.width);
+    const height = Number(image.height);
+    // console.log(width, height, clarifaiFace);
+    return {
+      leftCol: clarifaiFace.left_col * width,
+      topRow: clarifaiFace.top_row * height,
+      rightCol: width - (clarifaiFace.right_col * width),
+      bottomRow: height - (clarifaiFace.bottom_row * height),
+    }
+  }
+
+  displayFaceBox = (box) => {
+    console.log(box);
+    this.setState( {box: box} );
   }
 
   onInputChange = (event) => {
@@ -43,16 +63,13 @@ class App extends Component {
     app.models.predict(
         Clarifai.FACE_DETECT_MODEL, 
         this.state.input)
-      .then(
-    function(response) {
+      .then(response => this.displayFaceBox(this.calculateFaceLocation(response)))
       // do something with response
-      console.log(response.outputs[0].data.regions[0].region_info.bounding_box);
-    },
-    function(err) {
+      // console.log(response.outputs[0].data.regions[0].region_info.bounding_box);
+      .catch(err => console.log(err));
       // there was an error
     }
-  );
-  }
+  
 
   render() {
     return (
@@ -67,7 +84,10 @@ class App extends Component {
           onInputChange={this.onInputChange} 
           onButtonSubmit={this.onButtonSubmit}
         />
-        <FaceRecog imageUrl={this.state.imageUrl}/>
+        <FaceRecog 
+        imageUrl={this.state.imageUrl}
+        box={this.state.box}
+        />
       </div>
     );
   }
