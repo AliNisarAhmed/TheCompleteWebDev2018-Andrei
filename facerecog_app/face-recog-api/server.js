@@ -1,9 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt-nodejs');
+const cors = require('cors');
 
 const app = express();
 
 app.use(bodyParser.json());
+app.use(cors());
 
 const database = {
     users: [
@@ -23,6 +26,13 @@ const database = {
             entries: 0,
             joined: new Date(),
         }
+    ],
+    login: [
+      {
+        id: '987',
+        hash: '',
+        email: 'john@gmail.com'
+      }
     ]
 }
 
@@ -41,6 +51,9 @@ app.post('/signin', (req, res) => {
 
 app.post('/register', (req, res) => {
     const { email, name, password } = req.body;
+    bcrypt.hash(password, null, null, function(err, hash) {
+      console.log(hash);
+    })
     database.users.push({
     id: '125',
     name: name,
