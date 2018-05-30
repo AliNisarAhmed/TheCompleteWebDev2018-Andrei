@@ -8,11 +8,8 @@ import Register from './components/Register/Register';
 import Signin from './components/Signin/Signin';
 import './App.css';
 import Particles from 'react-particles-js';
-import Clarifai from 'clarifai';
+// import Clarifai from 'clarifai';
 
-const app = new Clarifai.App({
-  apiKey: 'd27038cccdb34d8ba37b9cec2a40147a'
- });
 
 const particlesOptions = {
   particles: {
@@ -89,9 +86,14 @@ class App extends Component {
 
   onButtonSubmit = () => {
     this.setState({imageUrl: this.state.input});
-    app.models.predict(
-        Clarifai.FACE_DETECT_MODEL, 
-        this.state.input)
+      fetch('http://localhost:3000/imageurl', {
+        method: 'post',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+        input: this.state.input 
+        })
+      })
+      .then(response => response.json())
       .then(response => {
         if(response) {
           fetch('http://localhost:3000/image', {
@@ -109,10 +111,7 @@ class App extends Component {
         }
         this.displayFaceBox(this.calculateFaceLocation(response))
       })
-      // do something with response
-      // console.log(response.outputs[0].data.regions[0].region_info.bounding_box);
       .catch(err => console.log(err));
-      // there was an error
     }
 
     onRouteChange = (route) => {
